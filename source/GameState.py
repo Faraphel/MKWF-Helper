@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 import requests
 
+from . import WEBSITE_URL
 from .event import Event
 
 
@@ -52,13 +53,13 @@ class GameState(Event):
     @property
     def track_sha1(self) -> str:
         return subprocess.run(
-            ["./tools/szs/wszst", "SHA1", self.track_path],
+            ["./tools/szs/wszst", "SHA1", self.track_path],  # TODO: simpler way than using entire wszst ?
             stdout=subprocess.PIPE
         ).stdout.decode().split(" ")[0]
 
     @property
     def track_url(self) -> str:
-        return f"https://faraphel.fr/mkwf/track/{self.track_sha1}"
+        return f"{WEBSITE_URL}/mkwf/track/{self.track_sha1}"
 
     @property
     def track_name(self) -> str:
@@ -67,6 +68,7 @@ class GameState(Event):
         if request.status_code != 200:
             return "- Unknown Track -"
 
+        # TODO: make an api in faraphel.fr
         content: bytes = request.content
         title: bytes = content[content.find(b"<title>")+len(b"<title>"):content.rfind(b"</title>")]
         return title.split(b" - ")[-1].decode()

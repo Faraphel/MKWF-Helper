@@ -5,7 +5,7 @@ import time
 from pathlib import Path
 from typing import Generator
 
-from source import GameState
+from source import GameState, WEBSITE_URL
 
 
 def get_logs(process, path: Path | str) -> Generator[str, None, None]:
@@ -28,6 +28,8 @@ def run(dolphin_executable_path: Path, dolphin_data_path: Path):
         [
             dolphin_executable_path,
 
+            "--user", dolphin_data_path,
+
             "--config=Logger.Options.Verbosity=4",  # enable all type of logs
             "--config=Logger.Options.WriteToFile=True",  # write the logs into a file
 
@@ -42,7 +44,7 @@ def run(dolphin_executable_path: Path, dolphin_data_path: Path):
     )
 
     def on_track_changed(self: GameState):
-        driver.get(f"https://faraphel.fr/mkwf/track/{self.track_sha1}")
+        driver.get(f"{WEBSITE_URL}/mkwf/track/{self.track_sha1}")
 
         presence.update(
             state="Playing",

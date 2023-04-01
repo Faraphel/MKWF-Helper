@@ -2,11 +2,12 @@ import os
 from pathlib import Path
 from tkinter import ttk, filedialog
 import tkinter as tk
+from typing import Final
 
 from source import core
 
-DEFAULT_DOLPHIN_EXECUTABLE: Path = Path(os.getenv("ProgramFiles")) / "Dolphin/Dolphin.exe"
-DEFAULT_DOLPHIN_DATA: Path = Path(os.getenv("AppData")) / "Dolphin Emulator"
+DEFAULT_DOLPHIN_EXECUTABLE: Final[Path] = Path(os.getenv("ProgramFiles")) / "Dolphin/Dolphin.exe"
+DEFAULT_DOLPHIN_DATA: Final[Path] = Path(os.getenv("AppData")) / "Dolphin Emulator"
 
 
 class Window(tk.Tk):
@@ -34,7 +35,7 @@ class FrameDolphin(ttk.LabelFrame):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.label_dolphin_executable = ttk.Label(self, text="Chemin de l'exécutable")
+        self.label_dolphin_executable = ttk.Label(self, text="Executable path")
         self.entry_dolphin_executable = ttk.Entry(self, width=50)
         self.entry_dolphin_executable.insert(0, str(DEFAULT_DOLPHIN_EXECUTABLE))
         self.button_dolphin_executable = ttk.Button(
@@ -45,7 +46,7 @@ class FrameDolphin(ttk.LabelFrame):
         self.entry_dolphin_executable.grid(row=2, column=1)
         self.button_dolphin_executable.grid(row=2, column=2)
 
-        self.label_dolphin_data = ttk.Label(self, text="Chemin des données")
+        self.label_dolphin_data = ttk.Label(self, text="Data path")
         self.entry_dolphin_data = ttk.Entry(self, width=50)
         self.entry_dolphin_data.insert(0, str(DEFAULT_DOLPHIN_DATA))
         self.button_dolphin_data = ttk.Button(

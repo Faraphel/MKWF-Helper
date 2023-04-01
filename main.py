@@ -12,21 +12,32 @@ import pypresence
 
 from source import GameState
 
+
+DOLPHIN_EXECUTABLE: Path = Path(r"C:\Program Files\Dolphin\Dolphin.exe")
+DOLPHIN_DATA: Path = Path(os.getenv("AppData")) / "Dolphin Emulator"
+
+
 process = subprocess.Popen(
     [
-        r"C:\Program Files\Dolphin\Dolphin.exe",
-        "--config=Logger.Options.Verbosity=4",
-        "--config=Logger.Options.WriteToFile=True",
+        DOLPHIN_EXECUTABLE,
+
+        "--config=Logger.Options.Verbosity=4",  # enable all type of logs
+        "--config=Logger.Options.WriteToFile=True",  # write the logs into a file
+
+        "--config=Logger.Logs.BOOT=True",  # enable the BOOT logs (path to the game)
+        "--config=Logger.Logs.CORE=True",  # enable the CORE logs (ID of the game)
+        "--config=Logger.Logs.FileMon=True",  # enable the FileMon logs (loaded and unloaded files)
+
+        "--config=Dolphin.General.UseDiscordPresence=False",  # disable dolphin discord presence
     ],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE
 )
 
-driver_service = Service("./driver/chromedriver.exe")
+driver_service = Service("./driver/chromedriver.exe")  # TODO: other service than chrome
 driver_options = Options()
-driver_options.add_argument("--app=https://faraphel.fr")
-driver_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-# TODO: other service than chrome
+driver_options.add_argument("--app=https://faraphel.fr")  # start in a window without tabs
+driver_options.add_experimental_option("excludeSwitches", ["enable-automation"])  # disable the "automated" message
 
 driver = webdriver.Chrome(service=driver_service, options=driver_options)
 
@@ -71,5 +82,5 @@ game_state = GameState()
 game_state.add_listener("track_changed", on_track_changed)
 
 
-for line in get_logs(r"C:\Users\RC606\Documents\Dolphin Emulator\Logs\dolphin.log"):
+for line in get_logs(DOLPHIN_DATA / "Logs/dolphin.log"):
     game_state.update_from_log(line)

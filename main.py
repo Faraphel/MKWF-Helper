@@ -13,16 +13,22 @@ import pypresence
 from source import GameState
 
 process = subprocess.Popen(
-    [r"C:\Program Files\Dolphin\Dolphin.exe", "-d"],
+    [
+        r"C:\Program Files\Dolphin\Dolphin.exe",
+        "--config=Logger.Options.Verbosity=4",
+        "--config=Logger.Options.WriteToFile=True",
+    ],
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE
 )
 
-driver = webdriver.Chrome(  # TODO: other service than chrome
-    service=Service("./driver/chromedriver.exe"),
-    options=Options()
-)
-driver.get("https://faraphel.fr")
+driver_service = Service("./driver/chromedriver.exe")
+driver_options = Options()
+driver_options.add_argument("--app=https://faraphel.fr")
+driver_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+# TODO: other service than chrome
+
+driver = webdriver.Chrome(service=driver_service, options=driver_options)
 
 presence = pypresence.Presence(1091407271466127361)
 presence.connect()

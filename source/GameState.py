@@ -58,17 +58,15 @@ class GameState(Event):
             return self.game_path / subpath
 
         else:
-            process = subprocess.run(
-                [
-                    "./tools/wit/wit",
-                    "EXTRACT",
-                    self.game_path,
-                    f"--files", f"+{subpath}",
-                    "--DEST", CACHE_PATH,
-                    "--flat",
-                    "--overwrite"
-                ]
-            )
+            process = subprocess.run([
+                "./tools/wit/wit",
+                "EXTRACT",
+                self.game_path,
+                f"--files", f"+{subpath}",
+                "--DEST", CACHE_PATH,
+                "--flat",
+                "--overwrite"
+            ])
             if process.returncode != 0:
                 raise Exception("Can't extract the file.")
 
@@ -77,7 +75,7 @@ class GameState(Event):
     @property
     def track_sha1(self) -> str:
         return subprocess.run(  # TODO: wrapper ?
-            ["./tools/szs/wszst", "SHA1", self.track_path],  # TODO: simpler way than using entire wszst ?
+            ["./tools/szs/wszst", "SHA1", self.track_path],
             stdout=subprocess.PIPE
         ).stdout.decode().split(" ")[0]
 

@@ -10,6 +10,8 @@ driver = None
 def init():
     global driver
 
+    # TODO: cache
+
     driver_service = Service("browser/driver/chromedriver.exe")  # TODO: other service than chrome
     driver_options = Options()
     driver_options.add_argument(f"--app={WEBSITE_URL}")  # start in a window without tabs

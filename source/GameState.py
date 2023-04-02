@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 import requests
 
-from . import WEBSITE_URL
+from . import WEBSITE_URL, CACHE_PATH
 from .event import Event
 
 
@@ -28,8 +28,11 @@ class GameState(Event):
             self.track_id = int(match.group("track_id"), 16)
 
         if (match := re.match(r".*Booting from disc: (?P<path>.*)\n", log)) is not None:
-            self.game_path = Path(match.group("path")).parent.parent
-            # TODO: non FST game
+            self.game_path = Path(match.group("path"))
+
+            if self.game_path.suffix == ".dol":
+                # if FST game, go from ./sys/main.dol to ./
+                self.game_path = self.game_path.parent.parent
 
         if (match := re.match(r".*Active title: (?P<id>.*)\n", log)) is not None:
             self.game_id = match.group("id")
@@ -48,11 +51,32 @@ class GameState(Event):
 
     @property
     def track_path(self) -> Path:
-        return self.game_path / f"files/Race/Course/{self.track_id:03x}.szs"
+        filename: str = f"{self.track_id:03x}.szs"
+        subpath: str = f"files/Race/Course/{filename}"
+
+        if self.game_path.is_dir():
+            return self.game_path / subpath
+
+        else:
+            process = subprocess.run(
+                [
+                    "./tools/wit/wit",
+                    "EXTRACT",
+                    self.game_path,
+                    f"--files", f"+{subpath}",
+                    "--DEST", CACHE_PATH,
+                    "--flat",
+                    "--overwrite"
+                ]
+            )
+            if process.returncode != 0:
+                raise Exception("Can't extract the file.")
+
+            return Path(CACHE_PATH / filename)
 
     @property
     def track_sha1(self) -> str:
-        return subprocess.run(
+        return subprocess.run(  # TODO: wrapper ?
             ["./tools/szs/wszst", "SHA1", self.track_path],  # TODO: simpler way than using entire wszst ?
             stdout=subprocess.PIPE
         ).stdout.decode().split(" ")[0]

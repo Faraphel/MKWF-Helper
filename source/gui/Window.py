@@ -18,16 +18,22 @@ class Window(tk.Tk):
         self.resizable(False, False)
 
         self.frame_dolphin = FrameDolphin(self, text="Dolphin")
-        self.frame_dolphin.grid(row=1, column=1)
+        self.frame_dolphin.grid(row=1, column=1, sticky=tk.NSEW)
+
+        self.frame_browser = FrameBrowser(self, text="Browser")
+        self.frame_browser.grid(row=2, column=1, sticky=tk.NSEW)
 
         self.button_start = ttk.Button(self, text="Start", width=10, command=self.start)
-        self.button_start.grid(row=2, column=1, sticky=tk.E)
+        self.button_start.grid(row=3, column=1, sticky=tk.E)
 
     def start(self):
         # get the executable and data path before destroying the window to keep the values
         executable, data = self.frame_dolphin.path_dolphin_executable, self.frame_dolphin.path_dolphin_data
+        browser: str = core.browser.AVAILABLE_BROWSERS[self.frame_browser.listbox_browser.current()]
+
         self.destroy()  # destroy the window
-        core.init()  # initialise the core of the tool
+        core.discord.init()  # initialise the discord module TODO: what if pypresence crash ?
+        core.browser.init(browser)  # initialize the browser module
         core.dolphin.run(executable, data)  # run the dolphin monitoring and process
 
 
@@ -80,3 +86,12 @@ class FrameDolphin(ttk.LabelFrame):
     @property
     def path_dolphin_data(self) -> Path:
         return Path(self.entry_dolphin_data.get())
+
+
+class FrameBrowser(ttk.LabelFrame):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.listbox_browser = ttk.Combobox(self, values=core.browser.AVAILABLE_BROWSERS)
+        self.listbox_browser.set(core.browser.AVAILABLE_BROWSERS[0])
+        self.listbox_browser.grid(row=1, column=1)

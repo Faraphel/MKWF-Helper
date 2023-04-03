@@ -8,6 +8,8 @@ WEBSITE_URL: Final[str] = "https://faraphel.fr"
 CACHE_PATH: Final[Path] = Path(".cache/")
 CACHE_PATH.mkdir(exist_ok=True)
 
+TOOLS_PATH: Final[Path] = Path("tools/")
+
 
 from .GameState import GameState  # NOQA
 

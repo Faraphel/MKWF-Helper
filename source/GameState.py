@@ -1,12 +1,12 @@
 import re
-import subprocess
 from dataclasses import field, dataclass
 from pathlib import Path
 from typing import Optional
 import requests
 
-from . import WEBSITE_URL, CACHE_PATH
+from . import WEBSITE_URL
 from .event import Event
+from .wt import wszst, wit
 
 
 @dataclass
@@ -54,30 +54,12 @@ class GameState(Event):
         filename: str = f"{self.track_id:03x}.szs"
         subpath: str = f"files/Race/Course/{filename}"
 
-        if self.game_path.is_dir():
-            return self.game_path / subpath
-
-        else:
-            process = subprocess.run([
-                "./tools/wit/wit",
-                "EXTRACT",
-                self.game_path,
-                f"--files", f"+{subpath}",
-                "--DEST", CACHE_PATH,
-                "--flat",
-                "--overwrite"
-            ])
-            if process.returncode != 0:
-                raise Exception("Can't extract the file.")
-
-            return Path(CACHE_PATH / filename)
+        if self.game_path.is_dir(): return self.game_path / subpath
+        else: return wit.extract_subfile(self.game_path, subpath)
 
     @property
     def track_sha1(self) -> str:
-        return subprocess.run(  # TODO: wrapper ?
-            ["./tools/szs/wszst", "SHA1", self.track_path],
-            stdout=subprocess.PIPE
-        ).stdout.decode().split(" ")[0]
+        return wszst.sha1(self.track_path)
 
     @property
     def track_url(self) -> str:

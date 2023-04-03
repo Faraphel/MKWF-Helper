@@ -1,7 +1,10 @@
 import pypresence
 
 
-presence = pypresence.Presence(1091407271466127361)
+APPLICATION_ID: int = 1091407271466127361
+
+
+presence = pypresence.Presence(APPLICATION_ID)
 
 
 def init():

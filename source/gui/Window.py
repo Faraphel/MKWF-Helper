@@ -1,18 +1,16 @@
-import os
 from pathlib import Path
 from tkinter import ttk, filedialog
 import tkinter as tk
-from typing import Final
 
-from source import core
-
-DEFAULT_DOLPHIN_EXECUTABLE: Final[Path] = Path(os.getenv("ProgramFiles")) / "Dolphin/Dolphin.exe"
-DEFAULT_DOLPHIN_DATA: Final[Path] = Path(os.getenv("AppData")) / "Dolphin Emulator"
+from source import core, OPTION_PATH
+from source.settings import Settings
 
 
 class Window(tk.Tk):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, settings: Settings, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.settings = settings
 
         self.title("MKWF-Helper")
         self.resizable(False, False)
@@ -26,24 +24,32 @@ class Window(tk.Tk):
         self.button_start = ttk.Button(self, text="Start", width=10, command=self.start)
         self.button_start.grid(row=3, column=1, sticky=tk.E)
 
+    def sync_settings(self):
+        self.settings.dolphin_executable_path = self.frame_dolphin.path_dolphin_executable
+        self.settings.dolphin_data_path = self.frame_dolphin.path_dolphin_data
+        self.settings.browser = core.browser.AVAILABLE_BROWSERS[self.frame_browser.listbox_browser.current()]
+
+        self.settings.save_to(OPTION_PATH)
+
     def start(self):
-        # get the executable and data path before destroying the window to keep the values
-        executable, data = self.frame_dolphin.path_dolphin_executable, self.frame_dolphin.path_dolphin_data
-        browser: str = core.browser.AVAILABLE_BROWSERS[self.frame_browser.listbox_browser.current()]
+        self.sync_settings()  # synchronise and save the settings
 
         self.destroy()  # destroy the window
+
         core.discord.init()  # initialise the discord module TODO: what if pypresence crash ?
-        core.browser.init(browser)  # initialize the browser module
-        core.dolphin.run(executable, data)  # run the dolphin monitoring and process
+        core.browser.init(self.settings.browser)  # initialize the browser module
+
+        # run the dolphin monitoring and process
+        core.dolphin.run(self.settings.dolphin_executable_path, self.settings.dolphin_data_path)
 
 
 class FrameDolphin(ttk.LabelFrame):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, master: Window, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
 
         self.label_dolphin_executable = ttk.Label(self, text="Executable path")
         self.entry_dolphin_executable = ttk.Entry(self, width=50)
-        self.entry_dolphin_executable.insert(0, str(DEFAULT_DOLPHIN_EXECUTABLE))
+        self.entry_dolphin_executable.insert(0, master.settings.dolphin_executable_path)
         self.button_dolphin_executable = ttk.Button(
             self, text="...", width=3,
             command=self.select_dolphin_executable
@@ -54,7 +60,7 @@ class FrameDolphin(ttk.LabelFrame):
 
         self.label_dolphin_data = ttk.Label(self, text="Data path")
         self.entry_dolphin_data = ttk.Entry(self, width=50)
-        self.entry_dolphin_data.insert(0, str(DEFAULT_DOLPHIN_DATA))
+        self.entry_dolphin_data.insert(0, master.settings.dolphin_data_path)
         self.button_dolphin_data = ttk.Button(
             self, text="...", width=3,
             command=self.select_dolphin_data
@@ -89,9 +95,9 @@ class FrameDolphin(ttk.LabelFrame):
 
 
 class FrameBrowser(ttk.LabelFrame):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, master: Window, *args, **kwargs):
+        super().__init__(master, *args, **kwargs)
 
         self.listbox_browser = ttk.Combobox(self, values=core.browser.AVAILABLE_BROWSERS)
-        self.listbox_browser.set(core.browser.AVAILABLE_BROWSERS[0])
+        self.listbox_browser.set(master.settings.browser)
         self.listbox_browser.grid(row=1, column=1)

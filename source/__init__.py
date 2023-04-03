@@ -9,6 +9,7 @@ CACHE_PATH: Final[Path] = Path(".cache/")
 CACHE_PATH.mkdir(exist_ok=True)
 
 TOOLS_PATH: Final[Path] = Path("tools/")
+OPTION_PATH: Final[Path] = Path("option.json")
 
 
 from .GameState import GameState  # NOQA

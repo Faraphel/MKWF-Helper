@@ -33,14 +33,9 @@ class Window(tk.Tk):
 
     def start(self):
         self.sync_settings()  # synchronise and save the settings
-
         self.destroy()  # destroy the window
 
-        core.discord.init()  # initialise the discord module TODO: what if pypresence crash ?
-        core.browser.init(self.settings.browser)  # initialize the browser module
-
-        # run the dolphin monitoring and process
-        core.dolphin.run(self.settings.dolphin_executable_path, self.settings.dolphin_data_path)
+        core.start(self.settings)
 
 
 class FrameDolphin(ttk.LabelFrame):

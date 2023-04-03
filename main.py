@@ -1,12 +1,24 @@
-from source import gui, OPTION_PATH
+import argparse
+
+from source import gui, OPTION_PATH, cli
 from source.settings import Settings
 
 settings = Settings.load_from(OPTION_PATH)
 
 
-window = gui.Window(settings)
-window.mainloop()
+parser = argparse.ArgumentParser()
+parser.add_argument("--cli", dest="gui", action="store_false", help="Don't use the graphical interface")
+
+cli.load_arguments(parser, settings)
+args = parser.parse_args()
+
+
+if args.gui:
+    window = gui.Window(settings)
+    window.mainloop()
+else:
+    cli.run(args, settings)
 
 # TODO: update detection ?
 # TODO: propose to enable / disable the discord RPC
-# TODO: cli
+# TODO: twitch integration ?

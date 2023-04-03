@@ -36,8 +36,6 @@ def run(dolphin_executable_path: Path, dolphin_data_path: Path):
             "--config=Logger.Logs.BOOT=True",  # enable the BOOT logs (path to the game)
             "--config=Logger.Logs.CORE=True",  # enable the CORE logs (ID of the game)
             "--config=Logger.Logs.FileMon=True",  # enable the FileMon logs (loaded and unloaded files)
-
-            "--config=Dolphin.General.UseDiscordPresence=False",  # disable dolphin discord presence
         ],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE

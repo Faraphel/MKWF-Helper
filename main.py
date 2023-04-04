@@ -20,5 +20,4 @@ else:
     cli.run(args, settings)
 
 # TODO: update detection ?
-# TODO: propose to enable / disable the discord RPC
 # TODO: twitch integration ?

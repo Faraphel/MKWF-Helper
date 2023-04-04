@@ -5,7 +5,7 @@ from source.settings import Settings
 
 
 def start(settings: Settings):
-    discord_init()  # initialise the discord module TODO: what if pypresence crash ?
+    discord_init()  # initialise the discord module
     browser_init(settings.browser)  # initialize the browser module
 
     # run the dolphin monitoring and process

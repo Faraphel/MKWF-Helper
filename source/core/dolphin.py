@@ -5,6 +5,8 @@ import time
 from pathlib import Path
 from typing import Generator
 
+from pypresence import InvalidID
+
 from source import GameState, WEBSITE_URL
 
 
@@ -44,12 +46,16 @@ def run(dolphin_executable_path: Path, dolphin_data_path: Path):
     def on_track_changed(self: GameState):
         driver.get(f"{WEBSITE_URL}/mkwf/track/{self.track_sha1}")
 
-        presence.update(
-            state="Playing",
-            details=self.track_name,
-            start=int(datetime.now().timestamp()),
-            large_image="icon"
-        )
+        if presence is not None:
+            try:
+                presence.update(
+                    state="Playing",
+                    details=self.track_name,
+                    start=int(datetime.now().timestamp()),
+                    large_image="icon"
+                )
+            except InvalidID:  # if discord is no longer available, ignore
+                pass
 
     game_state = GameState()
     game_state.add_listener("track_changed", on_track_changed)

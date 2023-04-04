@@ -66,14 +66,16 @@ class GameState(Event):
         return f"{WEBSITE_URL}/mkwf/track/{self.track_sha1}"
 
     @property
+    def track_api_url(self) -> str:
+        return f"{WEBSITE_URL}/api/v1/mkwf/track/information?sha1={self.track_sha1}"
+
+    @property
     def track_name(self) -> str:
-        request = requests.get(self.track_url)
+        request = requests.get(self.track_api_url)
+        if request.status_code != 200: return "- Can't Connect -"
 
-        if request.status_code != 200:
-            return "- Unknown Track -"
+        data = request.json()
+        if "error" in data: return "- Unknown Track -"
 
-        # TODO: make an api in faraphel.fr
-        content: bytes = request.content
-        title: bytes = content[content.find(b"<title>")+len(b"<title>"):content.rfind(b"</title>")]
-        return title.split(b" - ")[-1].decode()
+        return data["name"]
 

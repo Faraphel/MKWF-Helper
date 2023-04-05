@@ -1,14 +1,22 @@
+import webbrowser
 from pathlib import Path
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 import tkinter as tk
 
-from source import core, OPTION_PATH
+from source import core, OPTION_PATH, version
 from source.settings import Settings
+from source.version import GITHUB_RELEASES_URL
 
 
 class Window(tk.Tk):
     def __init__(self, settings: Settings, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        new_version_available = version.new_version_available()
+
+        if new_version_available:
+            if messagebox.askyesno("Update", "A new version of MKWF-Helper is available. Do you want to install it ? "):
+                webbrowser.open(GITHUB_RELEASES_URL)
 
         self.settings = settings
 

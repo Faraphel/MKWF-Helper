@@ -19,5 +19,4 @@ if args.gui:
 else:
     cli.run(args, settings)
 
-# TODO: update detection ?
 # TODO: twitch integration ?

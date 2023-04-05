@@ -1,7 +1,8 @@
 import argparse
 
-from source import core, OPTION_PATH
+from source import core, OPTION_PATH, version
 from source.settings import Settings
+from source.version import GITHUB_RELEASES_URL
 
 
 def run(args: argparse.Namespace, settings: Settings):
@@ -10,5 +11,8 @@ def run(args: argparse.Namespace, settings: Settings):
     settings.browser = args.browser
 
     settings.save_to(OPTION_PATH)
+
+    if version.new_version_available():
+        print(f"A new version is available at {GITHUB_RELEASES_URL}")
 
     core.start(settings)

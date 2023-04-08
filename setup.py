@@ -5,7 +5,7 @@ from source.version import get_current_version
 include_files = [
     "./LICENSE.md",
     "./README.md",
-    "./version"
+    "./version",
 
     "./browser",
     "./assets",

@@ -5,4 +5,4 @@ GITHUB_ROOT_URL: Final[str] = f"https://raw.githubusercontent.com/{GITHUB_REPO}/
 GITHUB_RELEASES_URL: Final[str] = f"https://github.com/{GITHUB_REPO}/releases/"
 
 
-from .update import new_version_available  # NOQA
+from .update import new_version_available, get_current_version, get_latest_version  # NOQA

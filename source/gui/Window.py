@@ -23,6 +23,9 @@ class Window(tk.Tk):
         self.title("MKWF-Helper")
         self.resizable(False, False)
 
+        self.photoimage_icon = tk.PhotoImage(file="assets/icon.png")
+        self.wm_iconphoto(True, self.photoimage_icon)
+
         self.frame_dolphin = FrameDolphin(self, text="Dolphin")
         self.frame_dolphin.grid(row=1, column=1, sticky=tk.NSEW)
 

@@ -7,7 +7,7 @@ from typing import Generator
 
 from pypresence import InvalidID
 
-from source import GameState, WEBSITE_URL
+from source import GameState, WEBSITE_URL, WEBSITE_TRACK_URL
 
 
 def get_logs(process, path: Path | str) -> Generator[str, None, None]:
@@ -44,7 +44,7 @@ def run(dolphin_executable_path: Path, dolphin_data_path: Path):
     )
 
     def on_track_changed(self: GameState):
-        driver.get(f"{WEBSITE_URL}/mkwf/track/{self.track_sha1}")
+        driver.get(f"{WEBSITE_TRACK_URL}/{self.track_sha1}")
 
         if presence is not None:
             try:

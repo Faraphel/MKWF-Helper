@@ -1,5 +1,6 @@
 /venv/
 /.idea/
 /.cache/
+/build/
 /browser/user/
 /option.json

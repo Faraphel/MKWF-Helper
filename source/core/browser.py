@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 from typing import Final
 
@@ -58,5 +59,7 @@ def init_chromium_type(name: str, driver_cls, options, service):
     options.add_argument(f"app={WEBSITE_URL}")  # start in a window without tabs
     options.add_argument(f"user-data-dir={(BROWSER_USER_PATH / name).absolute()}")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])  # disable the "automated" message
+
+    service.creation_flags = subprocess.CREATE_NO_WINDOW  # hide the devtool shell
 
     driver = driver_cls(service=service, options=options)

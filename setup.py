@@ -11,8 +11,8 @@ include_files = [
     "./assets",
     "./tools",
 
-    sys.exec_prefix + "\\DLLs\\tcl86t.dll",
-    sys.exec_prefix + "\\DLLs\\tk86t.dll",
+    sys.exec_prefix + "/DLLs/tcl86t.dll",
+    sys.exec_prefix + "/DLLs/tk86t.dll",
 ]
 
 options = {

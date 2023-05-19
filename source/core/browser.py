@@ -30,12 +30,13 @@ def init(browser: str = "chrome"):
 def init_chrome():
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.chrome.service import Service
+    from webdriver_manager.chrome import ChromeDriverManager
 
     init_chromium_type(
         name="chrome",
         driver_cls=webdriver.Chrome,
         options=Options(),
-        service=Service(str(BROWSER_DRIVER_PATH / "chromedriver.exe")),
+        service=Service(ChromeDriverManager(path=str(BROWSER_DRIVER_PATH)).install()),
     )
 
 
@@ -44,12 +45,13 @@ def init_edge():
 
     from selenium.webdriver.edge.options import Options
     from selenium.webdriver.edge.service import Service
+    from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
     init_chromium_type(
         name="edge",
         driver_cls=webdriver.Edge,
         options=Options(),
-        service=Service(str(BROWSER_DRIVER_PATH / "msedgedriver.exe")),
+        service=Service(EdgeChromiumDriverManager(path=str(BROWSER_DRIVER_PATH)).install()),
     )
 
 

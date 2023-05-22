@@ -7,7 +7,6 @@ include_files = [
     "./README.md",
     "./version",
 
-    "./browser",
     "./assets",
     "./tools",
 
@@ -37,7 +36,7 @@ setup(
         Executable(
             "main.py",
             icon="./assets/icon.ico",
-            base="win32gui",
+            # base="win32gui",
             target_name="MKWF-Helper.exe",
             shortcut_name="MKWF-Helper",
             shortcut_dir="DesktopFolder"

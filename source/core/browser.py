@@ -36,9 +36,19 @@ def init(browser: str = "chrome"):
         case _: init_chrome()
 
 
-def get_driver(base_url: str, driver_prefix: str, driver_filename: str, executable_path: Path, version_path: Path):
+def get_driver(
+        base_url: str,
+        version_endpoint: str,
+        version_encoding: str,
+        driver_prefix: str,
+        driver_filename: str,
+        executable_path: Path,
+        version_path: Path
+):
     """
+    :param version_encoding: encoding of the version data
     :param base_url: The base url for the download
+    :param version_endpoint: the endpoint where to get the current latest version
     :param driver_prefix: the prefix used in the url
     :param driver_filename: the filename of the executable file
     :param executable_path: the path where the executable will be downloaded
@@ -47,11 +57,11 @@ def get_driver(base_url: str, driver_prefix: str, driver_filename: str, executab
 
     # try to get the latest driver available
     try:
-        request = requests.get(f"{base_url}/LATEST_RELEASE", timeout=5)
+        request = requests.get(f"{base_url}/{version_endpoint}", timeout=5)
 
         if request.status_code == HTTPStatus.OK:
             # get the latest version
-            version: str = request.content.decode()
+            version: str = request.content.decode(version_encoding).strip()
 
             # if the current version does not exist or the version is different
             if not version_path.exists() or version != version_path.read_text():
@@ -88,6 +98,8 @@ def init_chrome():
     # download the driver
     get_driver(
         base_url="https://chromedriver.storage.googleapis.com",
+        version_endpoint="LATEST_RELEASE",
+        version_encoding="utf-8",
         driver_prefix="chromedriver",
         driver_filename="chromedriver.exe",
         executable_path=driver_executable_path,
@@ -118,6 +130,8 @@ def init_edge():
     # download the driver
     get_driver(
         base_url="https://msedgedriver.azureedge.net",
+        version_endpoint="LATEST_STABLE",
+        version_encoding="utf-16",
         driver_prefix="edgedriver",
         driver_filename="msedgedriver.exe",
         executable_path=driver_executable_path,

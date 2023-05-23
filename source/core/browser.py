@@ -25,13 +25,18 @@ BROWSER_USER_PATH: Final[Path] = BROWSER_PATH / "user"
 BROWSER_USER_PATH.mkdir(exist_ok=True, parents=True)
 
 
+class DriverException(Exception):
+    def __init__(self, driver_name: str):
+        super().__init__(f"Cannot install the driver {driver_name!r}")
+
+
 def init(browser: str = "chrome"):
     match browser:
         case "edge": init_edge()
         case _: init_chrome()
 
 
-def download_driver(base_url: str, driver_prefix: str, driver_filename: str, executable_path: Path, version_path: Path):
+def get_driver(base_url: str, driver_prefix: str, driver_filename: str, executable_path: Path, version_path: Path):
     """
     :param base_url: The base url for the download
     :param driver_prefix: the prefix used in the url
@@ -65,6 +70,10 @@ def download_driver(base_url: str, driver_prefix: str, driver_filename: str, exe
     except requests.exceptions.ReadTimeout:
         pass
 
+    # if the file still does not exist (cannot download it)
+    if not executable_path.exists():
+        raise DriverException(driver_filename)
+
 
 def init_chrome():
     from selenium.webdriver.chrome.options import Options
@@ -77,7 +86,7 @@ def init_chrome():
     driver_version_path: Final[Path] = driver_directory_path / "version"
 
     # download the driver
-    download_driver(
+    get_driver(
         base_url="https://chromedriver.storage.googleapis.com",
         driver_prefix="chromedriver",
         driver_filename="chromedriver.exe",
@@ -107,7 +116,7 @@ def init_edge():
     driver_version_path: Final[Path] = driver_directory_path / "version"
 
     # download the driver
-    download_driver(
+    get_driver(
         base_url="https://msedgedriver.azureedge.net",
         driver_prefix="edgedriver",
         driver_filename="msedgedriver.exe",

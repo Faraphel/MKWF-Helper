@@ -20,4 +20,3 @@ else:
     cli.run(args, settings)
 
 # TODO: twitch integration ?
-# TODO: handle error with a popup or a log

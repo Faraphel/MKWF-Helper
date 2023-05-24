@@ -45,6 +45,7 @@ class Window(tk.Tk):
 
     def start(self):
         self.sync_settings()  # synchronise and save the settings
+        self.destroy()  # destroy the window
 
         try:
             core.start(self.settings)
@@ -54,8 +55,6 @@ class Window(tk.Tk):
                 f"An error occurred",
                 f"An error occurred while trying to start the application :\n\n{str(traceback.format_exc())}"
             )
-
-        self.destroy()  # destroy the window
 
 
 class FrameDolphin(ttk.LabelFrame):

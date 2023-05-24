@@ -7,7 +7,12 @@ from typing import Generator
 
 from pypresence import InvalidID
 
-from source import GameState, WEBSITE_URL, WEBSITE_TRACK_URL
+from source import GameState, WEBSITE_TRACK_URL
+
+
+class InvalidDolphinExecutable(Exception):
+    def __init__(self, path: Path):
+        super().__init__(f"Invalid path for the dolphin executable : {path!r}")
 
 
 def get_logs(process, path: Path | str) -> Generator[str, None, None]:
@@ -25,6 +30,10 @@ def get_logs(process, path: Path | str) -> Generator[str, None, None]:
 def run(dolphin_executable_path: Path, dolphin_data_path: Path):
     from .browser import driver
     from .discord import presence
+
+    # if the dolphin executable does not exist, make a more explicit error
+    if not dolphin_executable_path.exists():
+        raise InvalidDolphinExecutable(dolphin_executable_path)
 
     process = subprocess.Popen(
         [

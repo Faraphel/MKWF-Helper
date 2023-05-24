@@ -7,7 +7,6 @@ include_files = [
     "./README.md",
     "./version",
 
-    "./browser",
     "./assets",
     "./tools",
 

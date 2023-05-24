@@ -1,6 +1,4 @@
 pypresence~=4.2.1
 selenium==4.9.1
-webdriver-manager
-
-requests==2.30.0
-cx-Freeze
+requests==2.31.0
+cx-Freeze==6.15.0

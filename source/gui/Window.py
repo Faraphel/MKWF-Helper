@@ -2,6 +2,7 @@ import webbrowser
 from pathlib import Path
 from tkinter import ttk, filedialog, messagebox
 import tkinter as tk
+import traceback
 
 from source import core, OPTION_PATH, version
 from source.settings import Settings
@@ -15,7 +16,7 @@ class Window(tk.Tk):
         new_version_available = version.new_version_available()
 
         if new_version_available:
-            if messagebox.askyesno("Update", "A new version of MKWF-Helper is available. Do you want to install it ? "):
+            if messagebox.askyesno("Update", "A new version of MKWF-Helper is available. Do you want to install it ?"):
                 webbrowser.open(GITHUB_RELEASES_URL)
 
         self.settings = settings
@@ -46,7 +47,14 @@ class Window(tk.Tk):
         self.sync_settings()  # synchronise and save the settings
         self.destroy()  # destroy the window
 
-        core.start(self.settings)
+        try:
+            core.start(self.settings)
+
+        except Exception:  # NOQA
+            messagebox.showerror(
+                f"An error occurred",
+                f"An error occurred while trying to start the application :\n\n{str(traceback.format_exc())}"
+            )
 
 
 class FrameDolphin(ttk.LabelFrame):
